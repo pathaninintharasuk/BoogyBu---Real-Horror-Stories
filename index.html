@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoogyBu - Real Horror Stories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .fog {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 300px;
+            background: linear-gradient(0deg, rgba(20, 20, 20, 0.8) 0%, transparent 100%);
+            animation: drift 20s infinite linear;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translateX(-50%);
+            }
+
+            100% {
+                transform: translateX(0%);
+            }
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.3) 0%, transparent 70%);
+            border-bottom: 1px solid #333;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            color: #dc143c;
+            text-shadow: 0 0 20px rgba(220, 20, 60, 0.5), 0 0 40px rgba(220, 20, 60, 0.3);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #8b0000, #4a0000);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            margin: 0 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(45deg, #dc143c, #8b0000);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #dc143c, #8b0000);
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.6);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .story-card {
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #dc143c, transparent);
+            transition: left 0.8s ease;
+        }
+
+        .story-card:hover::before {
+            left: 100%;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            border-color: #dc143c;
+            box-shadow: 0 15px 40px rgba(220, 20, 60, 0.2);
+        }
+
+        .story-title {
+            color: #dc143c;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .story-meta {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .story-preview {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .read-more {
+            background: transparent;
+            color: #dc143c;
+            border: 1px solid #dc143c;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .read-more:hover {
+            background: #dc143c;
+            color: white;
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
+        }
+
+        .story-form {
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid #333;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #dc143c;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #dc143c;
+            box-shadow: 0 0 10px rgba(220, 20, 60, 0.3);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #8b0000, #4a0000);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #dc143c, #8b0000);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 20, 60, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid #dc143c;
+            max-width: 800px;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: #dc143c;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            background: #dc143c;
+            color: white;
+        }
+
+        .category-filter {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .filter-btn {
+            background: transparent;
+            color: #888;
+            border: 1px solid #333;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #dc143c;
+            color: white;
+            border-color: #dc143c;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .stories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-btn {
+                margin: 0.25rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="fog"></div>
+
+    <header>
+        <h1 class="title">BoogyBu</h1>
+        <p class="subtitle">"Where nightmares become reality"</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="showSection('home')">Home</button>
+        <button class="nav-btn" onclick="showSection('browse')">Browse Stories</button>
+        <button class="nav-btn" onclick="showSection('submit')">Share Your Story</button>
+        <button class="nav-btn" onclick="showSection('about')">About</button>
+    </nav>
+
+    <div class="container">
+        <div id="home" class="section active">
+            <h2 style="color: #dc143c; text-align: center; margin-bottom: 2rem; font-size: 2rem;">Featured Horror
+                Stories</h2>
+            <div class="stories-grid" id="featuredStories">
+                <!-- Featured stories will be loaded here -->
+            </div>
+        </div>
+
+        <div id="browse" class="section">
+            <h2 style="color: #dc143c; text-align: center; margin-bottom: 2rem; font-size: 2rem;">All Stories</h2>
+
+            <div class="category-filter">
+                <button class="filter-btn active" onclick="filterStories('all')">All</button>
+                <button class="filter-btn" onclick="filterStories('ghost')">Ghost Stories</button>
+                <button class="filter-btn" onclick="filterStories('paranormal')">Paranormal</button>
+                <button class="filter-btn" onclick="filterStories('supernatural')">Supernatural</button>
+                <button class="filter-btn" onclick="filterStories('haunted')">Haunted Places</button>
+                <button class="filter-btn" onclick="filterStories('experience')">Real Experiences</button>
+            </div>
+
+            <div class="stories-grid" id="allStories">
+                <!-- All stories will be loaded here -->
+            </div>
+        </div>
+
+        <div id="submit" class="section">
+            <h2 style="color: #dc143c; text-align: center; margin-bottom: 2rem; font-size: 2rem;">Share Your Horror
+                Story</h2>
+
+            <form class="story-form" id="storyForm">
+                <div class="form-group">
+                    <label for="storyTitle">Story Title *</label>
+                    <input type="text" id="storyTitle" name="title" required placeholder="Enter a chilling title...">
+                </div>
+
+                <div class="form-group">
+                    <label for="authorName">Your Name</label>
+                    <input type="text" id="authorName" name="author" placeholder="Anonymous (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="storyCategory">Category *</label>
+                    <select id="storyCategory" name="category" required>
+                        <option value="">Select a category...</option>
+                        <option value="ghost">Ghost Story</option>
+                        <option value="paranormal">Paranormal</option>
+                        <option value="supernatural">Supernatural</option>
+                        <option value="haunted">Haunted Places</option>
+                        <option value="experience">Real Experience</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="storyLocation">Location (Optional)</label>
+                    <input type="text" id="storyLocation" name="location" placeholder="Where did this happen?">
+                </div>
+
+                <div class="form-group">
+                    <label for="storyContent">Your Story *</label>
+                    <textarea id="storyContent" name="content" required
+                        placeholder="Tell us your terrifying tale... Be as detailed as possible."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Your Story</button>
+            </form>
+        </div>
+
+        <div id="about" class="section">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h2 style="color: #dc143c; text-align: center; margin-bottom: 2rem; font-size: 2rem;">About BoogyBu
+                </h2>
+
+                <div
+                    style="background: linear-gradient(145deg, #1a1a1a, #0f0f0f); padding: 2rem; border-radius: 10px; border: 1px solid #333;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.8;">
+                        Welcome to <strong style="color: #dc143c;">BoogyBu</strong>, a collection of the most
+                        spine-chilling, real horror stories from around the world. Here, ordinary people share their
+                        extraordinary encounters with the supernatural, paranormal, and unexplained.
+                    </p>
+
+                    <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.8;">
+                        Whether you've witnessed a ghost, experienced something paranormal, or lived through a real-life
+                        horror story, this is the place to share your tale. Every story is treated with respect and
+                        care, creating a community where people can share their most frightening experiences.
+                    </p>
+
+                    <h3 style="color: #dc143c; margin-top: 2rem; margin-bottom: 1rem;">Guidelines for Submission</h3>
+                    <ul style="margin-left: 2rem; line-height: 1.8;">
+                        <li>Stories should be based on real experiences or genuine folklore</li>
+                        <li>Keep content appropriate - scary but not gratuitously violent</li>
+                        <li>Respect others' beliefs and experiences</li>
+                        <li>Longer, detailed stories are preferred</li>
+                        <li>Include location if relevant to the story</li>
+                    </ul>
+
+                    <p style="margin-top: 2rem; font-style: italic; text-align: center; color: #888;">
+                        "In the shadows of reality, truth can be more terrifying than fiction."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for reading full stories -->
+    <div id="storyModal" class="modal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal()">&times;</button>
+            <div id="modalContent">
+                <!-- Full story content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample horror stories data
+        // โหลด stories จาก localStorage ถ้ามี
+let stories = JSON.parse(localStorage.getItem('stories')) || [
+            {
+                id: 1,
+                title: "The Whispers in Room 237",
+                author: "Sarah M.",
+                category: "haunted",
+                location: "Old Victorian Hotel, Maine",
+                date: "2024-03-15",
+                preview: "I was working the night shift at the old Blackwood Hotel when I first heard them. Soft whispers coming from room 237 - a room that had been permanently locked since 1987...",
+                content: `I was working the night shift at the old Blackwood Hotel when I first heard them. Soft whispers coming from room 237 - a room that had been permanently locked since 1987, after a guest had died under mysterious circumstances.
+
+It was around 2:30 AM when I was doing my rounds. The hotel was nearly empty, just a few guests scattered across the first two floors. The third floor had been closed for renovations for months, but as I passed by the stairwell, I could swear I heard voices.
+
+At first, I thought it might be pipes or the old building settling, but as I climbed the stairs to investigate, the whispers became clearer. They weren't in English - or any language I recognized. The sounds seemed to be coming from behind the heavy wooden door of room 237.
+
+I pressed my ear against the door, and my blood ran cold. There were at least three distinct voices, having what sounded like an urgent conversation. But the room had been empty for months, and I had the only master key.
+
+When I unlocked the door and stepped inside, the whispers stopped immediately. The room was freezing cold, despite the heating being on throughout the building. My breath came out in visible puffs as I searched the room with my flashlight.
+
+That's when I saw her - a woman in a 1940s dress, standing by the window. She turned to look at me, her eyes completely black, and smiled. "You shouldn't have come here," she whispered, before vanishing into thin air.
+
+I ran from that room and never worked another night shift. The hotel closed permanently six months later, and I heard they found strange symbols carved into the walls of room 237 during demolition.`
+            },
+            {
+                id: 2,
+                title: "The Thing in the Woods",
+                author: "Michael R.",
+                category: "supernatural",
+                location: "Olympic National Forest, Washington",
+                date: "2024-02-28",
+                preview: "My camping trip in Olympic National Forest was supposed to be peaceful. What I encountered out there still gives me nightmares three months later...",
+                content: `My camping trip in Olympic National Forest was supposed to be peaceful. I'd been planning this solo hiking and camping adventure for months, looking forward to disconnecting from the world and reconnecting with nature. What I encountered out there still gives me nightmares three months later.
+
+I set up camp near a small creek about five miles from the nearest trail. The first two days were perfect - clear skies, beautiful scenery, and the kind of solitude I'd been craving. But on the third night, everything changed.
+
+I was sitting by my campfire around 9 PM when I first heard it - a sound like heavy breathing coming from the treeline. At first, I thought it might be a bear or elk, so I made noise and shined my flashlight in that direction. The breathing stopped immediately.
+
+Around midnight, I was jolted awake by the sound of something large circling my tent. The footsteps were heavy but deliberate, almost methodical. Whatever it was walked on two legs, not four. I lay perfectly still, barely breathing, as the footsteps continued for what felt like an hour.
+
+When morning came, I found tracks around my campsite unlike anything I'd ever seen. They were humanoid but much larger - at least size 20 if they were shoes. But they weren't shoes. The tracks showed what looked like long, clawed toes pressed deep into the soft earth.
+
+That night, I decided to pack up early, but as I was loading my gear, I saw it. Standing between two massive pine trees, about 50 yards away, was something that defied explanation. It stood at least 8 feet tall, covered in dark, matted fur, with arms that hung almost to its knees. But it was the eyes that will haunt me forever - intelligent, almost human, but filled with a predatory malevolence.
+
+We stared at each other for what felt like eternity. Then it let out a sound - not a roar or howl, but something like a laugh mixed with a scream. I grabbed what I could and ran, abandoning most of my gear.
+
+I reported it to the park rangers, but they just gave me the usual "bears can look human-like when standing" explanation. But I know what I saw. And sometimes, late at night, I swear I can still hear that terrible laugh echoing in my dreams.`
+            },
+            {
+                id: 3,
+                title: "The Mirror in the Attic",
+                author: "Jennifer L.",
+                category: "ghost",
+                location: "Family Home, Salem, Oregon",
+                date: "2024-01-20",
+                preview: "When we inherited my grandmother's house, we found an old mirror in the attic. My grandmother had warned me about it, but I thought it was just an old family superstition...",
+                content: `When we inherited my grandmother's house, we found an old mirror in the attic. My grandmother had warned me about it in her final days, telling me to "never look into the mirror when the moon is full," but I thought it was just the ramblings of an old woman losing her mind.
+
+The mirror was beautiful - an ornate Victorian piece with an elaborate silver frame covered in strange symbols I didn't recognize. It had been covered with a heavy cloth, tucked away in the corner of the attic like something shameful.
+
+Against my better judgment, I brought it down to our bedroom. My husband thought it would look perfect above our dresser, and I had to admit it was stunning. For the first few weeks, nothing unusual happened.
+
+Then came the night of the full moon in October.
+
+I was getting ready for bed when I noticed something odd in the mirror's reflection. The room looked the same, but the lighting was different - dimmer, more shadow than light. And there was someone standing behind me.
+
+I spun around, but the bedroom was empty. My husband was downstairs watching TV. When I looked back at the mirror, the figure was still there - a woman in a long, dark dress with her face obscured by shadow.
+
+Over the following weeks, the appearances became more frequent and more vivid. The woman in the mirror would mouth words I couldn't understand, sometimes pointing at me, sometimes at something behind me that I couldn't see in the real room.
+
+The worst part was realizing that the mirror wasn't showing our bedroom at all. The room in the reflection was different - older wallpaper, different furniture, and always that woman, becoming clearer and more agitated with each passing night.
+
+One night, I saw her clearly for the first time. Her face was gaunt and pale, her eyes were missing, and her mouth was sewn shut with thick, black thread. She pressed her hands against what seemed to be the glass from her side, and I could see her mouth moving frantically behind the stitches.
+
+That's when I found my grandmother's journal. She had been the mirror's previous owner, and she wrote about the woman - a woman named Catherine who had died in that very house in 1892, murdered by her husband and walled up in what is now our bedroom.
+
+The journal's final entry chilled me to the bone: "Catherine is getting stronger. She wants out. She wants to trade places. Never look in the mirror when the moon is full, or she'll find a way through."
+
+We moved the mirror back to the attic the next day, but I still wake up some nights feeling like someone is watching me sleep. And sometimes, in the bathroom mirror or shop windows, I catch glimpses of that same dark dress and those empty eye sockets staring back at me.
+
+I think Catherine followed me out.`
+            },
+            {
+                id: 4,
+                title: "The Phantom Hitchhiker",
+                author: "David K.",
+                category: "ghost",
+                location: "Highway 101, Northern California",
+                date: "2024-04-02",
+                preview: "Driving late at night on Highway 101, I picked up a hitchhiker in a white dress. When I turned to ask her destination, the passenger seat was empty...",
+                content: `Driving late at night on Highway 101, I picked up a hitchhiker in a white dress. When I turned to ask her destination, the passenger seat was empty, but the story was far from over.
+
+It was around 1 AM, and I was driving home from a business conference in San Francisco. The highway was nearly deserted, just the occasional semi truck and my headlights cutting through the heavy fog that had rolled in from the coast.
+
+About twenty miles north of Santa Rosa, I saw her standing on the shoulder of the road. A young woman in a white dress, thumb out, looking desperate. Something about the scene struck me as odd - who hitchhikes in a formal dress at 1 AM? - but my conscience got the better of me.
+
+I pulled over and rolled down the passenger window. She was beautiful, probably in her early twenties, with long dark hair and pale skin. But her eyes... there was something vacant about them, like she was looking through me rather than at me.
+
+"Thank you so much," she said, getting into the car. Her voice was soft, almost a whisper. "I need to get to Mill Valley."
+
+I nodded and pulled back onto the highway. Mill Valley was about thirty miles south - the opposite direction from where I'd found her, but I didn't question it. She sat quietly, occasionally giving me directions in that same whispered voice.
+
+About fifteen minutes into the drive, I started to feel cold. Really cold. I turned up the heat, but it didn't help. That's when I noticed something else - I couldn't see her in the rearview mirror. I could see the passenger seat, but it appeared empty.
+
+I glanced over at her, and she was still there, staring straight ahead. But when I looked in the mirror again, nothing.
+
+"Are you okay?" I asked, trying to keep my voice steady.
+
+She turned to look at me then, and I almost lost control of the car. Her face was exactly the same, but her eyes were completely black, and her skin had taken on a blue-gray pallor.
+
+"I'm fine," she said, but her voice now sounded like it was coming from underwater. "Just a little further."
+
+My hands were shaking as I gripped the steering wheel. I wanted to pull over, to let her out, but something told me that would be a very bad idea. So I kept driving, trying not to look at her directly.
+
+When we reached the Mill Valley exit, she pointed to a dirt road leading into some hills. "Just up there," she said.
+
+I followed the road for about a mile until it ended at an old cemetery. The moment I stopped the car, she spoke again, but this time her voice was different - desperate, pleading.
+
+"Please," she said, "tell my family I'm sorry. Tell them I didn't mean to leave the road."
+
+I turned to ask what she meant, but the passenger seat was empty. The only trace of her was the white dress lying crumpled on the seat, and it was soaking wet despite the dry night.
+
+I got out of the car on shaking legs and walked toward the cemetery. It was old, with headstones dating back to the 1800s, but I found what I was looking for near the entrance: "Rebecca Morrison, 1998-2019, Beloved Daughter, Taken Too Soon."
+
+I did some research when I got home. Rebecca Morrison had died on Highway 101 in 2019, driving home from her senior prom. Her car went off the road in heavy fog near the exact spot where I'd picked her up. She was wearing a white prom dress.
+
+The next day, I called the number listed in her obituary. Her mother answered, and when I told her about my experience, she began crying.
+
+"You're the fifth person to call in the past three years," she said through her tears. "Rebecca keeps trying to come home. We just wish she could find peace."
+
+I still have the dress. I've tried to return it to the family, but every time I plan to drive there, I find it back in my car the next morning, usually with a note that simply says "Not yet."
+
+I don't drive Highway 101 at night anymore.`
+            },
+            {
+                id: 5,
+                title: "The Shadow People",
+                author: "Anonymous",
+                category: "paranormal",
+                location: "Apartment Complex, Phoenix, Arizona",
+                date: "2024-03-08",
+                preview: "They appear in my peripheral vision at first - dark figures that vanish when I turn to look. But they're getting bolder, and I'm starting to think they want something...",
+                content: `They appear in my peripheral vision at first - dark figures that vanish when I turn to look. But they're getting bolder, and I'm starting to think they want something from me.
+
+It started about six months ago when I moved into my new apartment in Phoenix. The rent was surprisingly cheap for such a nice place, and now I understand why.
+
+At first, I thought it was just my eyes adjusting to a new environment. You know how it is when you move somewhere new - every shadow looks suspicious, every creak sounds ominous. But these weren't normal shadows.
+
+The first time I saw one clearly was on a Tuesday evening. I was watching TV when I noticed a dark figure standing in the hallway that led to my bedroom. It was roughly human-shaped but seemed to be made of pure shadow, with no definable features except for what might have been eyes - two points of slightly deeper darkness.
+
+When I turned to look directly at it, it vanished instantly.
+
+Over the following weeks, the sightings became more frequent. They would appear in doorways, in the corner of rooms, sometimes even sitting on my couch or standing by my bed while I slept. I'd wake up with the distinct feeling that I was being watched, and sure enough, there would be one or more shadow figures just standing there, perfectly still, observing me.
+
+I tried to rationalize it - stress from the move, tricks of light, maybe even a gas leak causing hallucinations. I had the apartment checked for everything from carbon monoxide to electromagnetic fields. Everything came back normal.
+
+But then they started interacting with my environment.
+
+I came home one day to find all the lights in my apartment turned on. Every single one. I always turn the lights off when I leave - it's a habit from childhood - but there they were, blazing bright in the middle of the day.
+
+That night, I set up a camera to record my living room while I slept. The next morning, I reviewed the footage and what I saw still gives me chills. Around 3 AM, the shadows started moving. Not like normal shadows cast by objects, but independently, flowing across walls and floors like liquid darkness.
+
+On the recording, I could see myself sleeping on the couch (I'd been too scared to sleep in my bedroom). Around 3:17 AM, three shadow figures approached me. They stood around the couch for nearly an hour, just watching. One of them reached out what looked like a hand and almost touched my face before pulling back.
+
+The most disturbing part was what happened next. One of the figures moved toward the camera, and as it got closer, the image began to distort. Static filled the screen, and when it cleared, there was something that looked like a message burned into the video - symbols that didn't match any alphabet I knew.
+
+I took the symbols to a professor at the local university who specialized in ancient languages. His face went pale when he saw them.
+
+"Where did you get these?" he asked, his voice barely above a whisper.
+
+When I told him about the shadows, he nodded grimly. "These are binding symbols," he said. "Very old. They're used to anchor spirits to a specific location. Someone or something is trying to keep those entities trapped in your apartment."
+
+"But why can I see them?" I asked.
+
+"Because the binding is weakening. They're becoming more visible, more solid. And if my translation is correct, they're not malevolent - they're trying to warn you about something else. Something that's been using them as a shield."
+
+That conversation was three days ago. Since then, the shadow figures have become almost solid, and I've started to understand what they're trying to tell me. There's something else in the apartment with us, something that feeds on fear and has been using the shadow people as camouflage.
+
+Last night, I saw it for the first time - a writhing mass of darkness that seemed to devour light itself, with too many eyes and a mouth that opened onto an endless void. The shadow people formed a barrier between it and me, and I could feel their desperation, their exhaustion from holding it back for so long.
+
+I'm writing this from a hotel room. I can't go back to that apartment, but I can't abandon the shadow people either. They've been protecting me, maybe protecting everyone, from something far worse than themselves.
+
+I think I need to find out who lived in that apartment before me, and what they did to create those binding symbols. Because if the shadows are getting weaker, that thing they've been holding back is getting stronger.
+
+And I have a terrible feeling that it's not going to stay confined to my apartment much longer.`
+            },
+            {
+                id: 6,
+                title: "The Music Box Ballerina",
+                author: "Maria S.",
+                category: "haunted",
+                location: "Antique Shop, New Orleans, Louisiana",
+                date: "2024-02-14",
+                preview: "I bought the music box for my daughter's birthday. It was beautiful, with a delicate porcelain ballerina that spun to a haunting melody. I should have asked why it was so cheap...",
+                content: `I bought the music box for my daughter's birthday. It was beautiful, with a delicate porcelain ballerina that spun to a haunting melody. I should have asked why it was so cheap.
+
+The antique shop in the French Quarter was cramped and dusty, filled with the kind of mysterious objects that make you wonder about their histories. My daughter Emma had been wanting a music box for months, and when I saw this one tucked away on a high shelf, I knew it was perfect.
+
+The shopkeeper, an elderly Creole woman with knowing eyes, hesitated when I brought it to the counter. "You sure about this one, chère?" she asked, running her weathered fingers over the intricate gold filigree. "She's been here a long time, waiting for the right home."
+
+I should have asked what she meant by that, but Emma's birthday was the next day, and I was running out of time. The woman wrapped it carefully in tissue paper, whispering something in French that I didn't catch.
+
+Emma absolutely loved it. The music box was exquisite - a small mahogany case with mother-of-pearl inlays, and inside, a porcelain ballerina in a pale pink tutu. When you wound the key, she would spin gracefully to the melody of "Für Elise," but the tune was somehow different, more melancholy than I remembered.
+
+For the first few weeks, everything was fine. Emma would wind it up before bed and watch the ballerina dance until she fell asleep. But then I started noticing strange things.
+
+The music box would play on its own, sometimes in the middle of the night. I'd wake to the sound of that haunting melody drifting from Emma's room, but when I checked, the key wasn't wound and Emma was fast asleep.
+
+Then there were the dreams. Emma started having vivid nightmares about a sad little girl who lived in the music box and wanted to come out to play. She would wake up crying, saying the ballerina had been talking to her, telling her stories about being trapped in the dark.
+
+I thought it was just an overactive imagination until the night I saw it myself.
+
+I was passing Emma's room around midnight when I heard the music playing. I pushed open the door, expecting to find Emma awake and playing with the box, but she was sound asleep. The music box sat on her dresser, lid open, the ballerina spinning slowly to the melody.
+
+But the ballerina looked different. Instead of the serene expression I remembered, her tiny porcelain face looked anguished, desperate. And as I watched, frozen in the doorway, she turned her head to look directly at me.
+
+Her tiny mouth moved, and though no sound came out, I could somehow understand what she was saying: "Help me."
+
+The next day, I returned to the antique shop, but it was gone. The storefront was empty, with a "For Lease" sign in the window. The neighboring shopkeeper told me the place had been vacant for over a year.
+
+Desperate for answers, I took the music box to a local historian who specialized in New Orleans folklore. When I showed her the box, her face went white.
+
+"Do you know what you have here?" she asked, her voice shaking. "This belonged to the Dufresne family. Their daughter Céleste died in 1924, just seven years old. The family was convinced her spirit was trapped in this music box - she had been playing with it when she fell ill with scarlet fever."
+
+The historian pulled out an old newspaper clipping from 1924. The headline read: "Tragic Death of Young Ballerina Céleste Dufresne." The accompanying photograph showed a beautiful little girl in a ballet costume, and the resemblance to the porcelain ballerina was unmistakable.
+
+"The family tried everything to help her spirit move on," the historian continued. "Priests, psychics, even voodoo practitioners. Nothing worked. The music box was eventually sold when the family left New Orleans, but it always finds its way back. There have been dozens of reports over the decades of families experiencing the same phenomena you describe."
+
+That night, I sat in Emma's room with the music box, waiting. At exactly 3 AM, the melody began to play. The ballerina spun slowly, and this time I could see her clearly - not just the porcelain figure, but a translucent image of little Céleste overlaying it.
+
+"I'm not trying to hurt anyone," she said, her voice like wind chimes. "I just want to play. I've been alone for so long."
+
+Emma woke up then, and instead of being frightened, she sat up in bed and smiled at the music box. "It's okay, Céleste," she said gently. "You don't have to be alone anymore."
+
+What happened next still brings tears to my eyes. Emma began to sing along with the melody, and slowly, the anguished expression on the ballerina's face began to soften. The translucent figure of Céleste became brighter, more solid, and for just a moment, I could see her clearly - a beautiful little girl with sad eyes that were finally beginning to shine with hope.
+
+"Thank you," she whispered, and then she was gone.
+
+The music box still plays its melody, but it's different now - lighter, happier. The ballerina spins with joy instead of desperation, and Emma sleeps peacefully through the night.
+
+Sometimes I catch Emma having tea parties for two, setting out an extra cup and chatting with someone I can't see. When I ask who she's playing with, she just smiles and says, "My friend Céleste is teaching me to dance."
+
+I think some spirits don't need to be banished - they just need to be remembered, to know that they're not forgotten. Céleste found what she was looking for: a friend who wasn't afraid of her, someone who could see past the tragedy to the lonely little girl underneath.
+
+The music box remains on Emma's dresser, and I've come to find the melody comforting rather than frightening. It's the sound of two little girls, nearly a century apart, who found each other across the veil between worlds and discovered that friendship can transcend even death itself.`
+            },
+            {
+                id: 7,
+                title: "La Llorona",
+                author: "Malintzin ",
+                category: "ghost",
+                location: "Various rivers and villages in Spain",
+                date: "16th-17th century",
+                preview: "In Spain, there is a lesser-known version of La Llorona. It tells of a woman who drowned herself after losing her children and is said to haunt rivers at night, weeping and calling out for them. Travelers claim to hear her cries along quiet waterways...",
+content: `In Spain, there is a lesser-known version of La Llorona. It tells of a woman who drowned herself after losing her children and is said to haunt rivers at night, weeping and calling out for them. Travelers claim to hear her cries along quiet waterways.
+The earliest documentation of La Llorona is traced back to 1550 in Mexico City. But there are theories about her story being connected to specific Aztec mythological creation stories. "The Hungry Woman" includes a wailing woman constantly crying for food, which has been compared to La Llorona's signature nocturnal wailing for her children. The motherly nature of La Llorona's tragedy has been compared to Cihuacoatl, an Aztec goddess deity of motherhood. Her seeking of children to keep for herself is significantly compared to Coatlicue, known as "Our Lady Mother" or Tonantzin who is also comparable to the Virgen de Guadalupe, another significant mother figure in Mexican culture, also a monster that devours filth or sin. She was in rage so much that she drowned her children and then was so sad that she drowned herself and now is called the weeping woman.
+
+The legend of La Llorona is traditionally told throughout Mexico, Central America and northern South America. La Llorona is sometimes conflated with La Malinche, the Nahua woman who served as Hernán Cortés's interpreter and also bore his son. La Malinche is considered both the mother of the modern Mexican people and a symbol of national treachery for her role in aiding the Spanish.
+
+Stories of weeping female phantoms are common in the folklore of both Iberian and Amerindian cultures. Scholars have pointed out similarities between La Llorona and the Cihuacōātl of Aztec mythology, as well as Eve and Lilith of Hebrew mythology. Author Ben Radford's investigation into the legend of La Llorona, published in Mysterious New Mexico, found common elements of the story in the German folktale "Die Weiße Frau" dating from 1486. La Llorona also bears a resemblance to the ancient Greek tale of the demigoddess Lamia, in which Hera, Zeus's wife, learned of his affair with Lamia and killed all the children Lamia had with Zeus. Out of jealousy over the loss of her own children, Lamia kills other women's children.
+
+The Florentine Codex is an important text about the Spanish invasion of Mexico in 1519, a quote from which is, "The sixth omen was that many times a woman would be heard going along weeping and shouting. She cried out loudly at night, saying, 'Oh my children, we are about to go forever.' Sometimes she said, 'Oh my children, where am I to take you?'"
+
+While the roots of the La Llorona legend appear to be pre-Hispanic, the earliest published reference to the legend is a 19th-century sonnet by Mexican poet Manuel Carpio. The poem makes no reference to infanticide, rather La Llorona is identified as the ghost of a woman named Rosalia who was murdered by her husband.`
+            },
+{
+                id:8,
+                title: "The Green Lady of Stirling Castle",
+                author: "",
+                category: "haunted",
+                location: "Stirling Castle, Scotland",
+                date: "16th century",
+                preview: "The Green Lady is believed to be a maid who died in a fire while trying to protect her mistress. Her ghost appears in a green dress, often accompanied by the smell of smoke. Staff and visitors have reported sudden cold chills in the castle.",
+                content: `The most famous spirit to call Stirling Castle home is the ghost of the Green Lady. Stirling Castle still serves as home to a garrison. One evening she delayed dinner in the Officer's Mess when she materialized behind the chef preparing the meal for the soldiers. Feeling he was being watched, he turned around, only to see her green translucent form standing behind him, at which time he fainted. She vanished on this occasion, but her appearances are usually a harbinger of bad things to come. Her visits have occurred shortly before fires or other mishaps at the castle on several occasions.
+
+Battlements used to surmount the Governor's Block in the upper square of the castle. In the 1820s, castle sentries walking their beat along the battlements used to report hearing strange sights and sounds. One night, a sentry on his way to start his guard duty came across the body of the guardsman he was on his way to replace. The guardsman was dead at his post, his mouth wide open with a look of sheer horror. Over the next few decades, the sentry duty was halted, and the battlements dismantled, leaving only an angled roof. Alarmingly, in the room directly below, footsteps were still heard walking along the ceiling as though the sentry was still making his rounds. The footsteps were heard on three different occasions, once in 1946 and twice more a decade later, by other officers of the Argyll and Sutherlands. In all three events, it was very unnerving when all involved realized there was nowhere for anyone to walk up there with the battlements long gone.
+
+The ghost of a Pink Lady sometimes can be seen leaving the castle and walking to the neighboring Church of the Holy Rude at Ladies' Rock. This was an elevated location where the ladies of the court would go to watch knights participate in jousting tournaments. Some believe the Pink Lady is the ghost of the sole survivor of Edward I's siege of the castle in 1304. Having escaped the siege, she returns to the castle to find her slain husband. However, her spirit is seen leaving the castle, not entering.
+
+There is also a male ghost dressed in a Highland kilt, often seen turning a corner and disappearing through a doorway near the dungeon. A spirit indeed, as the doorway he walks through is a now solid stone wall, having been bricked up for decades.`,
+            },
+            {
+                id:9,
+                title: "Red Lady of Huntingdon College",
+                author: "Kathryn Tucker Windham's",
+                category: "haunted",
+                location: "Huntingdon College, Selly Oak, Birmingham, England",
+                date: "20th century",
+                preview: "A young woman who was bullied by her classmates took her own life at the college. Her spirit, dressed in a red gown, is said to walk the halls late at night. Students claim to hear footsteps and see flashes of red in the dark.",
+                content: `According to Windham and historian Daniel Barefoot, there have actually been two ghosts alleged to have haunted Huntingdon College. They first appeared in the late nineteenth century, while the college was still located in the town of Tuskegee, Alabama. She was described as a young woman wearing a scarlet dress and carrying a scarlet parasol who walked wordlessly up and down the halls of a women's dormitory late one night, bathed in a red glow. This apparition, according to Windham, ultimately left the residence hall and disappeared from view as she passed through a gateway outside. The alleged identity or origin of this wraith has never been determined, and she was apparently never seen again.
+                The second Red Lady, according to Windham, was a former student named Martha (according to Windham) or Margaret (according to another source; no last name for this alleged person has ever been offered) who had reluctantly come to Huntingdon from New York, because her father's mother had attended Huntingdon when it was in Tuskegee, and his will specified that she must attend his mother's alma mater. Martha did not especially want to come to Alabama, but her father's fortune was large and she knew his deep love for his home state. Martha, according to the legend, was dressed in red when she arrived, and she brought with her red draperies for her windows and a red spread for her bed together with other accessories of the same color. Although many of her fellow students asked her to explain her apparent obsession with the color red, Martha always demurred.`
+            },
+            {
+                id:10,
+                title: "The Phantom Monks of Glastonbury",
+                author: "Unknown",
+                category: "paranormal",
+                location: "Glastonbury Abbey ruins, Somerset, England",
+                date: "16th century",
+                preview: "After the dissolution of monasteries, monks of Glastonbury were executed and their abbey destroyed. Witnesses claim their spirits still process through the ruins at night, chanting prayers. Locals describe an eerie sense of calm mixed with dread.",
+content: `A photographer on a visit to Glastonbury Abbey was stunned when he spotted the ghostly figure of a monk in one of his shots.
+
+Nathan Clarke at the popular attraction with his family last Sunday (August 7).
+
+A founding member of the Paranormal Detectives - a YouTube based paranormal group - Nathan frequently takes pictures when visiting historical sites in the hope of capturing something paranormal, but, he says, he very rarely managed to capture anything, This time, however, he was in luck.
+
+"Looking through my photos from Glastonbury Abbey I saw a photo which blew me away," said Nathan. "There appeared to be what looked like a monk/Abbot standing in the distance in one of the photos! I checked the next photo that was taken of the same area a second or two later and no monk! Absolutely thrilled with this photographic evidence of the paranormal ."
+
+This is not the first time a ghostly apparition of a monk has appeared at the Abbey. Back in 2016 (coincidentally also on the weekend of the Glastonbury Extravaganza), Lara Tetlow from Bristol also found a spooky figure in one of her images.
+
+In 1539 Henry VIII closed Glastonbury Abbey but the abbot refused to submit to the King.
+
+He responded by hanging, drawing and quartering the abbot and two other monks. It is believed that it is the ghosts of these monks that haunt the Abbey.
+
+The quarters of the bodies were publicly displayed in Glastonbury and other Somerset towns. Glastonbury Abbey was sacked then it was 'cannibalized' by people who took stone.`,
+            },
+            {
+                id:11,
+                title: "The Headless Nun of Drogheda",
+                author: "unknown",
+                category: "ghost",
+                location: "Drogheda, County Louth, Ireland",
+                date: "17th century",
+                preview: "A nun was murdered and decapitated while protecting treasure during a raid. Her headless ghost is said to roam the old paths, carrying a lantern. Locals avoid the area at night, fearing her restless spirit.",
+                content: "According to the tale that dates back to the mid-18th century, the Headless Nun was an 18th-century resident of the area named Sister Marie Inconnue (Inconnue being the French for 'unknown') who was subsequently beheaded.[1] Details of the story vary: in one version, a mad trapper cut off her head and ran into the woods with it. In another, two sailors cut off her head after she refused to divulge the location of a treasure. The story holds that Sister Marie's head was never found, resulting in her spirit forever roaming the area in search of it. Today, Headless Nun tours are among the tourist attraction offerings at French Fort Cove."
+            },
+            {
+                id:12,
+                title: "The Black Annis",
+                author: "unknown",
+                category: "supernatural",
+                location: "England",
+                date: "18 century",
+                preview: "A blue-faced hag with iron claws said to live in a cave in Leicestershire. She was believed to come out at night to snatch children and animals, drinking their blood and hanging their skins on tree branches.",
+                content: `The earliest known written reference to Black Annis was from an eighteenth century title deed that referred to a parcel of land as Black Anny's Bower Close. The first volume of County Folklore (1895), published by The Folklore Society, mentions two such title deeds dated May 13th and 14th, 1764. The Black Annis figure has several possible origins. Some have claimed, as T. C. Lethbridge did, that the origin can be found in Celtic mythology based on Danu or it may derive from Germanic mythology. Donald Alexander Mackenzie in his 1917 book Myths of Crete and Pre-Hellenic Europe suggested the origin of the legend may go back to the mother goddess of ancient Europe which he contends was thought of as a devourer of children. He identified Black Annis as being similar to the Indic Kali, Gaelic Muilearteach and Cailleach Bheare, the Greek Demeter, the Mesopotamian Labartu and the Egyptian Isis-Hathor and Neith. It has been suggested that the legend may derive from a popular memory of sacrifice to an ancient goddess. It is thought that offerings of children may have been made to the goddess that inspired the legend in the archaeological Hunting Period, the oak tree at the cave's entrance also a common site of local meetings.
+
+Ronald Hutton however disagrees with such theories in his book The Triumph of the Moon: A History of Modern Pagan Witchcraft. He suggests that the Black Annis of Leicestershire legend was based on a real person named Agnes Scott, a late medieval anchoress (or by some accounts a Dominican nun who cared for a local leper colony), born in Little Antrum, who lived a life of prayer in a cave in the Dane Hills and was buried in the churchyard in Swithland. Hutton suggests that the memory of Scott was distorted into the image of Black Annis either to frighten local children or due to the anti-anchorite sentiment that arose from the Protestant Reformation. In the Victorian era the story of Agnes Scott, or Annis, became confused with the similarly named goddess Anu. Lethbridge made this connection and went on to claim that Annis was the personification of the Great Goddess in crone form, leading to interest from Wiccan groups.
+
+The connection between Black Annis and Agnes Scott was made previous to Hutton, including the gravesite and cave, in an issue of the Leicester Chronicle dated Feb. 26th, 1842 and reprinted in the first volume of County Folklore (1895).`
+            }
+        ];
+
+        let filteredStories = [...stories];
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Display stories
+        function displayStories(storiesToShow, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            storiesToShow.forEach(story => {
+                const storyCard = document.createElement('div');
+                storyCard.className = 'story-card';
+                storyCard.innerHTML = `
+                    <h3 class="story-title">${story.title}</h3>
+                    <div class="story-meta">
+                        By ${story.author} • ${story.location} • ${story.category}
+                    </div>
+                    <p class="story-preview">${story.preview}</p>
+                    <button class="read-more" onclick="openStory(${story.id})">Read Full Story</button>
+                    ${story.isUserStory ? `<button class="read-more" style="margin-left:10px;background:#333;border-color:#333;" onclick="deleteStory(${story.id})">Delete</button>` : ''}
+                `;
+                container.appendChild(storyCard);
+            });
+        }
+
+        // Show section
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Remove active class from all nav buttons
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+
+            // Add active class to clicked nav button
+            event.target.classList.add('active');
+
+            // Load content based on section
+            if (sectionName === 'browse') {
+                displayStories(filteredStories, 'allStories');
+            }
+        }
+
+        // Filter stories
+        function filterStories(category) {
+            // Remove active class from all filter buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+
+            // Add active class to clicked filter button
+            event.target.classList.add('active');
+
+            // Filter stories
+            if (category === 'all') {
+                filteredStories = [...stories];
+            } else {
+                filteredStories = stories.filter(story => story.category === category);
+            }
+
+            // Update display
+            displayStories(filteredStories, 'allStories');
+        }
+
+        // Open story modal
+        function openStory(storyId) {
+            const story = stories.find(s => s.id === storyId);
+            const modal = document.getElementById('storyModal');
+            const modalContent = document.getElementById('modalContent');
+
+            // ตรวจสอบว่า date เป็นวันที่จริงหรือไม่
+            let dateDisplay = story.date;
+            const parsedDate = new Date(story.date);
+            if (!isNaN(parsedDate.getTime())) {
+                dateDisplay = parsedDate.toLocaleDateString();
+            }
+
+            modalContent.innerHTML = `
+                <h2 style="color: #dc143c; margin-bottom: 1rem;">${story.title}</h2>
+                <div style="color: #888; margin-bottom: 2rem; font-size: 0.9rem;">
+                    By ${story.author} • ${story.location} • ${dateDisplay}
+                </div>
+                <div style="white-space: pre-line; line-height: 1.8; font-size: 1.1rem;">
+                    ${story.content}
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('storyModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('storyModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('storyForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(this);
+            const newStory = {
+                id: stories.length + 1,
+                title: formData.get('title'),
+                author: formData.get('author') || 'Anonymous',
+                category: formData.get('category'),
+                location: formData.get('location') || 'Unknown',
+                date: new Date().toISOString().split('T')[0],
+                preview: formData.get('content').substring(0, 150) + '...',
+                content: formData.get('content'),
+                isUserStory: true // เพิ่ม flag นี้
+            };
+
+            // Add to stories array
+            stories.unshift(newStory);
+            filteredStories = [...stories];
+            // บันทึกลง localStorage
+localStorage.setItem('stories', JSON.stringify(stories));
+
+            // Show success message
+            alert('Thank you for sharing your story! It has been added to our collection.');
+
+            // Reset form
+            this.reset();
+
+            // Switch to browse section to show the new story
+            showSection('browse');
+        });
+
+        // เพิ่มฟังก์ชันลบ
+        function deleteStory(storyId) {
+            if (confirm('Are you sure you want to delete this story?')) {
+                const index = stories.findIndex(s => s.id === storyId);
+                if (index !== -1) {
+                    // หลังลบเรื่อง
+stories.splice(index, 1);
+filteredStories = [...stories];
+localStorage.setItem('stories', JSON.stringify(stories));
+                    displayStories(filteredStories, 'allStories');
+                    displayStories(stories.slice(0, 3), 'featuredStories');
+                    closeModal();
+                }
+            }
+        }
+
+        // Initialize the page
+        window.addEventListener('load', function () {
+            createStars();
+            displayStories(stories.slice(0, 3), 'featuredStories'); // Show first 3 as featured
+            displayStories(filteredStories, 'allStories');
+        });
+    </script>
+</body>
+
+</html>
